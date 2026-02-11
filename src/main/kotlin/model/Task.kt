@@ -1,6 +1,5 @@
 package org.trivaris.tasks.model
 
-import org.trivaris.tasks.DatabaseManager
 import java.sql.ResultSet
 import java.sql.SQLException
 

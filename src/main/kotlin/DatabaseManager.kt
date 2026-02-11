@@ -4,7 +4,7 @@ import org.trivaris.tasks.model.Task
 import org.trivaris.tasks.model.User
 
 class DatabaseManager(
-    val connectionManager: ConnectionManager
+    private val connectionManager: ConnectionManager
 ) {
     fun getUserById(userId: Int): User? {
         val sql = "SELECT * FROM users WHERE id=?"
@@ -24,7 +24,7 @@ class DatabaseManager(
         return conn.prepareStatement(sql).use { statement ->
             statement.setString(1, email)
             statement.executeQuery().use { rs ->
-                rs.next()
+                if (!rs.next()) return null
                 User.fromResultSet(rs)
             }
         }

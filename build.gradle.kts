@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     kotlin("jvm") version "2.3.0"
+    id("org.openjfx.javafxplugin") version "0.1.0"
     application
 }
 
@@ -28,8 +29,13 @@ kotlin {
     jvmToolchain(21)
 }
 
+javafx {
+    version = "21"
+    modules = listOf("javafx.controls")
+}
+
 application {
-    mainClass = "org.trivaris.tasks.TaskTrackerKt"
+    mainClass = "org.trivaris.tasks.AppKt"
 }
 
 tasks.test {
