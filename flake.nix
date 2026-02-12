@@ -12,9 +12,9 @@
   in
   {
     devShells.${system}.default = pkgs.mkShell {
-        buildInputs = with pkgs; [ jdk21 libxxf86vm xorg.libXtst glib gtk3 libGL ];
+        buildInputs = with pkgs; [ jdk21 libxxf86vm xorg.libXtst glib gtk3 libGL tailwindcss ];
         shellHook = ''
-            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.xorg.libXtst pkgs.libxxf86vm pkgs.glib pkgs.gtk3 pkgs.libGL ]}:$LD_LIBRARY_PATH
+            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.xorg.libXtst pkgs.libxxf86vm pkgs.glib pkgs.gtk3 pkgs.libGL]}:$LD_LIBRARY_PATH
         '';
       };
     };

@@ -1,49 +1,44 @@
-import java.util.Properties
-
 plugins {
-    kotlin("jvm") version "2.3.0"
-    id("org.openjfx.javafxplugin") version "0.1.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktor)
     application
 }
 
 group = "org.trivaris.tasks"
 version = "1.0-SNAPSHOT"
 
-val dotenv = Properties()
-val envFile = project.file(".env")
-if (envFile.exists())
-    envFile.inputStream().use { dotenv.load(it) }
-
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation(kotlin("test"))
-    implementation("org.postgresql:postgresql:42.7.7")
-    implementation("com.github.ajalt.mordant:mordant:2.4.0")
+application {
+    mainClass = "io.ktor.server.netty.EngineMain"
 }
 
 kotlin {
     jvmToolchain(21)
 }
 
-javafx {
-    version = "21"
-    modules = listOf("javafx.controls")
-}
+dependencies {
+    //Ktor
+    implementation(libs.ktor.htmx.html)
+    implementation(libs.ktor.htmx)
 
-application {
-    mainClass = "org.trivaris.tasks.AppKt"
+    //Ktor Server
+    implementation(libs.ktor.server.di)
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.config.yaml)
+    implementation(libs.ktor.server.htmx)
+    implementation(libs.ktor.server.html.builder)
+
+    //Other
+    implementation(libs.postgres)
+    implementation(libs.mordant)
+    implementation(libs.logback)
+
+    //Test
+    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation("io.ktor:ktor-server-test-host-jvm:3.4.0")
 }
 
 tasks.test {
     useJUnitPlatform()
-}
-
-tasks.withType<JavaExec> {
-    dotenv.forEach { (key, value) ->
-        environment(key.toString(), value.toString())
-    }
 }

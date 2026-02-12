@@ -1,0 +1,14 @@
+ktor:
+  application:
+    modules:
+      - org.trivaris.tasks.AppKt.module
+    dependencies:
+      - org.trivaris.tasks.DependencyInitializationKt.provideConnectionManager
+      - org.trivaris.tasks.DependencyInitializationKt.provideDataBaseManager
+  deployment:
+    port: 8080
+database:
+  host: ${DB_HOST:localhost}
+  port: ${DB_PORT:5432}
+  username: ${DB_USER}
+  password: ${DB_PASSWORD}

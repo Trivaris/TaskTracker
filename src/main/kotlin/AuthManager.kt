@@ -1,12 +1,12 @@
 package org.trivaris.tasks
 
-import javafx.application.Platform
-import javafx.beans.binding.Bindings
-import javafx.beans.binding.ObjectBinding
-import javafx.beans.binding.StringBinding
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
+import org.trivaris.tasks.model.JWTData
+import org.trivaris.tasks.model.JWToken
 import org.trivaris.tasks.model.User
+import java.nio.ByteBuffer
+import java.security.PrivateKey
+import java.security.Signature
+import kotlin.io.encoding.Base64
 
 class AuthManager(
     private val dbManager: DatabaseManager,
@@ -14,52 +14,47 @@ class AuthManager(
     private var user: User? = null
     private var loginEmail: String? = null
     private var loginPassword: String? = null
-    val userId: Int?
-        get() = user?.id
-    val isLoggedIn: Boolean
-        get() = user != null
 
-    private val loginResultProperty: ObjectProperty<LoginResult> = SimpleObjectProperty(this, "status", LoginResult.NO_INPUT)
-
-    fun loginResultProperty(): ObjectBinding<LoginResult> {
-        return Bindings.createObjectBinding( {
-            loginResultProperty.get()
-        }, loginResultProperty)
-    }
-
-    fun loginDescriptionProperty(): StringBinding {
-        return Bindings.createStringBinding({
-            loginResultProperty.get().description
-        }, loginResultProperty)
-    }
+    private var _loginResult: LoginResult = LoginResult.NO_INPUT
+    val loginResult: LoginResult
+        get() = _loginResult
 
     fun login() {
-        val email: String? = loginEmail
-        val password: String? = loginPassword
+        val email = loginEmail ?: return
+        val password = loginPassword ?: return
 
-        if (email == null || password == null) {
-            loginResultProperty.set(LoginResult.NO_INPUT)
-            return
+        val hashedPassword = password.hashCode().toString()
+        val dbUser: User? = dbManager.getUserByEmail(email)
+
+        val result = when {
+            dbUser == null -> LoginResult.NO_SUCH_USER
+            hashedPassword != dbUser.password -> LoginResult.PASSWORD_DOES_NOT_MATCH
+            else -> LoginResult.OK
         }
 
-        Thread {
-            val hashedPassword = password.hashCode().toString()
-            val user: User? = dbManager.getUserByEmail(email)
-
-            val result = if (user == null)
-                LoginResult.NO_SUCH_USER
-            else if (hashedPassword != user.password)
-                LoginResult.PASSWORD_DOES_NOT_MATCH
-            else
-                LoginResult.OK
-
-            Platform.runLater { loginResultProperty.set(result) }
-            if (result.success) this.user = user
-        }.start()
+        if (result.success) user = dbUser
+        _loginResult = result
     }
 
-    fun setPassword(password: String) { loginPassword = password }
-    fun setEmail(email: String) { loginEmail = email }
+    fun getJWT(privateKey: PrivateKey): JWToken? {
+        if (!loginResult.success) return null
+        val userId = user?.id ?: return null
+        val algorithm = "HS256"
+        val data = JWTData(algorithm, "JWT", userId)
+        val signer = Signature.getInstance(algorithm)
+
+        val bytes = ByteBuffer.allocate(4).putInt(data.hashCode()).array()
+
+        signer.initSign(privateKey)
+        signer.update(bytes)
+
+        val signature: String = Base64.encode(signer.sign())
+
+        return JWToken(data, signature)
+    }
+
+    fun setPassword(password: String?) { loginPassword = password }
+    fun setEmail(email: String?) { loginEmail = email }
 
     enum class LoginResult(val description: String, val success: Boolean) {
         OK("Login was successful", true),

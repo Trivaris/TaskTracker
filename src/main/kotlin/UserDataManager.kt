@@ -1,13 +1,13 @@
 package org.trivaris.tasks
 
 import org.trivaris.tasks.model.Task
+import org.trivaris.tasks.model.User
 
 class UserDataManager(
-    private val dbManager: DatabaseManager,
-    private val authManager: AuthManager
+    private val user: User,
+    private val dbManager: DatabaseManager
 ) {
     fun getTasks(): List<Task> {
-        val userId = authManager.userId ?: return emptyList()
-        return dbManager.getTasksOfUser(userId)
+        return dbManager.getTasksOfUser(user.id)
     }
 }
