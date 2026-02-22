@@ -45,3 +45,5 @@ bin/
 .DS_Store
 
 .env
+private_key.pem
+public_key.pem

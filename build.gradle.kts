@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor)
     application
 }
@@ -19,6 +20,7 @@ dependencies {
     //Ktor
     implementation(libs.ktor.htmx.html)
     implementation(libs.ktor.htmx)
+    implementation(libs.ktor.serialization.json)
 
     //Ktor Server
     implementation(libs.ktor.server.di)
@@ -27,16 +29,19 @@ dependencies {
     implementation(libs.ktor.server.config.yaml)
     implementation(libs.ktor.server.htmx)
     implementation(libs.ktor.server.html.builder)
+    implementation(libs.ktor.server.negotiation)
 
     //Other
     implementation(libs.postgres)
     implementation(libs.mordant)
     implementation(libs.logback)
+    implementation(libs.argon2kt)
 
     //Test
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
-    testImplementation("io.ktor:ktor-server-test-host-jvm:3.4.0")
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.platform.launcher)
 }
 
 tasks.test {

@@ -3,6 +3,8 @@
     <envs>
       <env name="DB_USER" value="trivaris" />
       <env name="DB_PASSWORD" value="LOGOfloX2" />
+      <env name="KEYSTORE_PRIVKEY" value="$PROJECT_DIR$/private_key.pem" />
+      <env name="KEYSTORE_PUBKEY" value="$PROJECT_DIR$/public_key.pem" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="io.ktor.server.netty.EngineMain" />
     <module name="TaskTracker.main" />

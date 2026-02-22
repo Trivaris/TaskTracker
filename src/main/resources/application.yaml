@@ -5,6 +5,7 @@ ktor:
     dependencies:
       - org.trivaris.tasks.DependencyInitializationKt.provideConnectionManager
       - org.trivaris.tasks.DependencyInitializationKt.provideDataBaseManager
+      - org.trivaris.tasks.DependencyInitializationKt.provideKeystore
   deployment:
     port: 8080
 database:
@@ -12,3 +13,6 @@ database:
   port: ${DB_PORT:5432}
   username: ${DB_USER}
   password: ${DB_PASSWORD}
+keystore:
+  private_key: ${KEYSTORE_PRIVKEY:./private_key.pem}
+  public_key: ${KEYSTORE_PUBKEY:./public_key.pem}

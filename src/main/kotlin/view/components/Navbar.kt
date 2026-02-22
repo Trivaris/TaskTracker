@@ -1,4 +1,4 @@
-package org.trivaris.tasks.html.components
+package org.trivaris.tasks.view.components
 
 import kotlinx.html.*
 
